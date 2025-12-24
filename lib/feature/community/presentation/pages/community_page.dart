@@ -422,15 +422,15 @@ class _CommunityPageState extends State<CommunityPage>
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Colors.purple.withOpacity(0.1),
-                Colors.purple.withOpacity(0.05),
+                AppColors.primaryBlue.withOpacity(0.1),
+                AppColors.primaryBlue.withOpacity(0.05),
               ],
             ),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Row(
             children: [
-              Icon(Icons.groups, color: Colors.purple, size: 28),
+              Icon(Icons.groups, color: AppColors.primaryBlue, size: 28),
               SizedBox(width: 12),
               Expanded(
                 child: Text(
@@ -481,10 +481,14 @@ class _CommunityPageState extends State<CommunityPage>
                 Container(
                   padding: EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.purple.withOpacity(0.1),
+                    color: AppColors.primaryBlue.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(Icons.groups, color: Colors.purple, size: 28),
+                  child: Icon(
+                    Icons.groups,
+                    color: AppColors.primaryBlue,
+                    size: 28,
+                  ),
                 ),
                 SizedBox(width: 12),
                 Expanded(
@@ -556,7 +560,7 @@ class _CommunityPageState extends State<CommunityPage>
                 },
                 child: Text('Join Group'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.purple,
+                  backgroundColor: AppColors.primaryBlue,
                   foregroundColor: Colors.white,
                   padding: EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import '../../../../core/constants/app_colors.dart';
 import '../../domain/entities/tremor_reading.dart';
 import '../bloc/tremor_bloc.dart';
 import '../bloc/tremor_event.dart';

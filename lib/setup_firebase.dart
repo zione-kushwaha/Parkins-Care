@@ -19,6 +19,10 @@ import 'feature/notifications/data/services/fcm_service.dart' show FcmService;
 import 'feature/notifications/data/services/notification_handler.dart';
 import 'feature/notifications/domain/repository/notification_repository.dart';
 import 'feature/notifications/presentation/bloc/notification_bloc/notification_bloc.dart';
+import 'feature/tremor/data/repositories/tremor_repository_impl.dart';
+import 'feature/tremor/data/services/tremor_detection_service.dart';
+import 'feature/tremor/domain/repositories/tremor_repository.dart';
+import 'feature/tremor/presentation/bloc/tremor_bloc.dart';
 
 void setupFirebaseDependencies() {
   // Firebase instances
@@ -88,4 +92,17 @@ void setupFirebaseDependencies() {
   );
   getIt.registerLazySingleton(() => notificationHandler);
   getIt.registerFactory(() => NotificationBloc(getIt()));
+
+  // Tremor dependencies
+  final tremorRepository = TremorRepositoryImpl(
+    firestore: firestore,
+    auth: firebaseAuth,
+  );
+  final tremorDetectionService = TremorDetectionService();
+
+  getIt.registerLazySingleton<TremorRepository>(() => tremorRepository);
+  getIt.registerLazySingleton(() => tremorDetectionService);
+  getIt.registerFactory(
+    () => TremorBloc(repository: getIt(), detectionService: getIt()),
+  );
 }
