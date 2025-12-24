@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "810535262210",
+    "project_id": "parkins-care",
+    "storage_bucket": "parkins-care.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:810535262210:android:9e97c2841334e6ba02af1b",
+        "android_client_info": {
+          "package_name": "com.example.parkins_care"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8SF0gHYOazPQgTBsmdHyTe1NiFdgffE0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
