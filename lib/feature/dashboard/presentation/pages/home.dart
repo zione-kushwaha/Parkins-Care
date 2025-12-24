@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:parkincare/features/notifications/presentation/pages/notifications_page.dart';
-import 'package:parkincare/features/reminders/presentation/pages/reminder.dart';
-import 'package:parkincare/features/settings/presentation/pages/settings.dart';
-import 'package:parkincare/features/tremor/presentation/pages/tremor_monitor_page.dart';
-import 'package:parkincare/features/tremor/presentation/bloc/tremor_bloc.dart';
-import 'package:parkincare/features/tremor/presentation/bloc/tremor_event.dart';
-import 'package:parkincare/features/tremor/presentation/bloc/tremor_state.dart';
-import 'package:parkincare/features/video_call/services/jitsi_meet_service.dart';
 import '../../../../../core/constants/app_colors.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
 
+import '../../../notifications/presentation/pages/notifications_page.dart';
+import '../../../settings/presentation/pages/settings.dart';
+import '../../../tremor/presentation/bloc/tremor_bloc.dart';
+import '../../../tremor/presentation/bloc/tremor_event.dart';
+import '../../../tremor/presentation/bloc/tremor_state.dart' show TremorState, EmergencyContactsLoaded;
+import '../../../tremor/presentation/pages/tremor_monitor_page.dart';
 import 'home_page_content.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -27,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<Widget> get _pages => [
     DashboardPage(onEmergencyPressed: _toggleEmergencyMode),
-    const ReminderPage(),
+    Container(),
     const NotificationsPage(),
     _buildPageWithAppBar('Settings', Icons.settings, const SettingsPage()),
   ];
@@ -210,25 +208,7 @@ class _EmergencyOptionsSheet extends StatelessWidget {
 
   const _EmergencyOptionsSheet({required this.onClose});
 
-  Future<void> _makeCall(BuildContext context, String phoneNumber) async {
-    // Navigate to video call with meeting ID 888
-    try {
-      final jitsiService = JitsiMeetService();
-      await jitsiService.startEmergencyCall(
-        userId: '888',
-        emergencyContacts: [phoneNumber],
-      );
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Starting video call with meeting ID: 888'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    }
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -287,7 +267,7 @@ class _EmergencyOptionsSheet extends StatelessWidget {
               icon: Icons.local_hospital,
               title: 'Emergency Services',
               subtitle: 'Video Call - Meeting ID: 888',
-              onTap: () => _makeCall(context, '911'),
+              onTap: (){}
             ),
           ),
 
@@ -326,7 +306,9 @@ class _EmergencyOptionsSheet extends StatelessWidget {
                           title: contact.name,
                           subtitle:
                               '${contact.relationship} - Video Call (888)',
-                          onTap: () => _makeCall(context, contact.phoneNumber),
+                          onTap: (){
+                            
+                          },
                           isPrimary: contact.isPrimary,
                         ),
                       ),

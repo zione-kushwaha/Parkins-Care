@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/utils/utils/size_extension.dart';
-import '../../../../auth/presentation/bloc/auth_bloc.dart';
-import '../../../../auth/presentation/bloc/auth_state.dart';
+import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../../../auth/presentation/bloc/auth_state.dart';
 
 Widget buildDrawerHeader(BuildContext context) {
   return BlocBuilder<AuthBloc, AuthState>(

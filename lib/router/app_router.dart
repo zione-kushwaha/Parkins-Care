@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:parkins_care/feature/dashboard/presentation/pages/home.dart';
 import '../feature/auth/presentation/pages/forgot_password_screen.dart';
 import '../feature/auth/presentation/pages/sign_in_screen.dart';
 import '../feature/auth/presentation/pages/sign_up_screen.dart';
@@ -34,12 +35,9 @@ class AppRouter {
       // Main Dashboard
       GoRoute(
         path: AppRoutes.home,
-        builder: (context, state) => Scaffold(
-          appBar: AppBar(title: const Text('Home')),
-          body: const Center(child: Text('Welcome to ParkinCare!')),
-        ),
+        builder: (context, state) => HomeScreen()
       ),
-      
+
     ],
     errorBuilder: (context, state) => const ErrorScreen(),
   );

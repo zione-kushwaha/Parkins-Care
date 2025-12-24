@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:parkins_care/feature/auth/presentation/bloc/auth_state.dart';
+import 'package:parkins_care/feature/tremor/domain/entities/tremor_reading.dart';    
 import '../../../../../core/constants/app_routes.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../web_view.dart';
+import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../../../community/presentation/pages/community_page.dart';
+import '../../../tremor/presentation/bloc/tremor_bloc.dart';
+import '../../../tremor/presentation/bloc/tremor_state.dart';
+import '../../../tremor/presentation/pages/tremor_monitor_page.dart';
+import '../widgets/custom_drawer.dart';
 
 
 class DashboardPage extends StatelessWidget {
@@ -244,7 +253,7 @@ class DashboardPage extends StatelessWidget {
                               Text(
                                 isMonitoring
                                     ? currentReading != null
-                                          ? 'Active • ${currentReading.severity.label}'
+                                          ? 'Active • ${currentReading.severity.label} tremors'
                                           : 'Active • Monitoring...'
                                     : 'Inactive',
                                 style: TextStyle(
