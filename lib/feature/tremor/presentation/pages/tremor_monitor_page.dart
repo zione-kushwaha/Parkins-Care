@@ -336,7 +336,7 @@ class _TremorMonitorPageState extends State<TremorMonitorPage>
                 ),
               ),
               const Text(
-                'Magnitude',
+                'Threshold Magnitude',
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
             ],
@@ -687,9 +687,7 @@ class _TremorMonitorPageState extends State<TremorMonitorPage>
           const SizedBox(height: 16),
           OutlinedButton.icon(
             onPressed: () {
-              TremorApiService()
-                  .sendTremorData(reading)
-                  .then((success) {
+              TremorApiService().sendTremorData(reading).then((success) {
                 if (success) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -807,7 +805,7 @@ class _TremorMonitorPageState extends State<TremorMonitorPage>
             child: const Text('Cancel'),
           ),
           const SizedBox(width: 8),
-        
+
           const SizedBox(width: 8),
           ElevatedButton.icon(
             onPressed: () {

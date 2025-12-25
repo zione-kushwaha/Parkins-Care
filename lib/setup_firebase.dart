@@ -23,6 +23,10 @@ import 'feature/tremor/data/repositories/tremor_repository_impl.dart';
 import 'feature/tremor/data/services/tremor_detection_service.dart';
 import 'feature/tremor/domain/repositories/tremor_repository.dart';
 import 'feature/tremor/presentation/bloc/tremor_bloc.dart';
+import 'feature/reminders/data/repositories/reminder_repository_impl.dart';
+import 'feature/reminders/domain/repositories/reminder_repository.dart';
+import 'feature/reminders/presentation/bloc/reminder_bloc.dart';
+import 'core/utils/dummy_data_generator.dart';
 
 void setupFirebaseDependencies() {
   // Firebase instances
@@ -105,4 +109,20 @@ void setupFirebaseDependencies() {
   getIt.registerFactory(
     () => TremorBloc(repository: getIt(), detectionService: getIt()),
   );
+
+  // Reminder dependencies
+  final reminderRepository = ReminderRepositoryImpl(
+    firestore: firestore,
+    auth: firebaseAuth,
+  );
+
+  getIt.registerLazySingleton<ReminderRepository>(() => reminderRepository);
+  getIt.registerFactory(() => ReminderBloc(repository: getIt()));
+
+  // Dummy Data Generator (for testing)
+  final dummyDataGenerator = DummyDataGenerator(
+    firestore: firestore,
+    auth: firebaseAuth,
+  );
+  getIt.registerLazySingleton(() => dummyDataGenerator);
 }

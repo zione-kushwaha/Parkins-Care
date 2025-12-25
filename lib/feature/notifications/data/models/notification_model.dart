@@ -16,13 +16,25 @@ class NotificationModel extends NotificationEntity {
   // From Firestore
   factory NotificationModel.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
+    
+    // Handle both Timestamp and String formats for timestamp
+    DateTime timestamp;
+    final timestampData = data['timestamp'];
+    if (timestampData is Timestamp) {
+      timestamp = timestampData.toDate();
+    } else if (timestampData is String) {
+      timestamp = DateTime.parse(timestampData);
+    } else {
+      timestamp = DateTime.now();
+    }
+    
     return NotificationModel(
       id: doc.id,
       title: data['title'] ?? '',
       body: data['body'] ?? '',
       imageUrl: data['imageUrl'],
       data: data['data'] != null ? Map<String, dynamic>.from(data['data']) : null,
-      timestamp: (data['timestamp'] as Timestamp).toDate(),
+      timestamp: timestamp,
       isRead: data['isRead'] ?? false,
       type: data['type'],
     );

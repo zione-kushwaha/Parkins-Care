@@ -5,6 +5,8 @@ import '../../../../core/theme/bloc/theme_bloc.dart';
 import '../../../../core/theme/bloc/theme_event.dart';
 import '../../../../core/theme/bloc/theme_state.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../../../../core/di/injection_container.dart';
+import '../../../../core/utils/dummy_data_generator.dart';
 
 import '/core/utils/status_overlay.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -120,6 +122,35 @@ class _SettingsPageState extends State<SettingsPage> {
                   icon: Icons.bug_report_outlined,
                   title: 'Report a Bug',
                   onTap: () => _launchURL('mailto:support@yourapp.com'),
+                ),
+                const Divider(height: 1),
+
+                const SizedBox(height: 20),
+
+                // Debug Section (for testing - can be removed in production)
+                _buildSectionHeader('Developer Tools', color: Colors.orange),
+                _buildTile(
+                  icon: Icons.add_circle_outline,
+                  title: 'Add Dummy Data',
+                  subtitle: 'Add sample reminders and notifications',
+                  titleColor: Colors.orange,
+                  onTap: () => _addDummyData(context),
+                ),
+                const Divider(height: 1, indent: 72),
+                _buildTile(
+                  icon: Icons.refresh,
+                  title: 'Regenerate Dummy Data',
+                  subtitle: 'Clear and recreate all sample data',
+                  titleColor: Colors.orange,
+                  onTap: () => _regenerateDummyData(context),
+                ),
+                const Divider(height: 1, indent: 72),
+                _buildTile(
+                  icon: Icons.delete_sweep,
+                  title: 'Clear All Data',
+                  subtitle: 'Remove all reminders and notifications',
+                  titleColor: Colors.red[400],
+                  onTap: () => _clearAllData(context),
                 ),
                 const Divider(height: 1),
 
@@ -415,6 +446,215 @@ class _SettingsPageState extends State<SettingsPage> {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text('Could not open $url')));
+      }
+    }
+  }
+
+  Future<void> _addDummyData(BuildContext context) async {
+    // Show confirmation dialog
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Add Dummy Data'),
+        content: const Text(
+          'This will add sample reminders and notifications to your account. This is useful for testing. Continue?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.orange,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Add Data'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
+    // Show loading
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              ),
+              SizedBox(width: 16),
+              Text('Adding dummy data...'),
+            ],
+          ),
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }
+
+    // Add dummy data
+    try {
+      final generator = getIt<DummyDataGenerator>();
+      await generator.addAllDummyData();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('✅ Dummy data added successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('❌ Error: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
+
+  // Regenerate dummy data
+  Future<void> _regenerateDummyData(BuildContext context) async {
+    // Show confirmation dialog
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Regenerate Dummy Data?'),
+        content: const Text(
+          'This will delete all existing reminders and notifications, then create fresh sample data.\n\nThis action cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: FilledButton.styleFrom(backgroundColor: Colors.orange),
+            child: const Text('Regenerate'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    // Show loading
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Row(
+          children: [
+            SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(width: 16),
+            Text('Regenerating dummy data...'),
+          ],
+        ),
+        duration: Duration(seconds: 5),
+      ),
+    );
+
+    try {
+      final generator = getIt<DummyDataGenerator>();
+      await generator.regenerateAllData();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('✅ Dummy data regenerated successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('❌ Error: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
+
+  // Clear all data
+  Future<void> _clearAllData(BuildContext context) async {
+    // Show confirmation dialog
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Clear All Data?'),
+        content: const Text(
+          'This will permanently delete ALL reminders and notifications.\n\nThis action cannot be undone!',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('Delete All'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    // Show loading
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Row(
+          children: [
+            SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Colors.white,
+              ),
+            ),
+            SizedBox(width: 16),
+            Text('Clearing all data...'),
+          ],
+        ),
+        duration: Duration(seconds: 3),
+      ),
+    );
+
+    try {
+      final generator = getIt<DummyDataGenerator>();
+      await generator.clearAllData();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('✅ All data cleared successfully!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('❌ Error: $e'), backgroundColor: Colors.red),
+        );
       }
     }
   }

@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:parkins_care/core/theme/bloc/theme_state.dart';
 import 'package:parkins_care/feature/auth/presentation/bloc/auth_bloc.dart';
 import 'package:parkins_care/feature/tremor/presentation/bloc/tremor_bloc.dart';
+import 'package:parkins_care/feature/reminders/presentation/bloc/reminder_bloc.dart';
+import 'package:parkins_care/feature/medication/presentation/bloc/medication_bloc.dart';
 import 'package:parkins_care/firebase_options.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'core/constants/app_colors.dart';
@@ -56,6 +58,8 @@ class ParkinCareApp extends StatelessWidget {
         ),
         BlocProvider(create: (_) => getIt<NotificationBloc>()),
         BlocProvider(create: (_) => getIt<TremorBloc>()),
+        BlocProvider(create: (_) => getIt<ReminderBloc>()),
+        BlocProvider(create: (_) => MedicationBloc()),
       ],
       child: BlocBuilder<ThemeBloc, ThemeState>(
         builder: (context, themeState) {

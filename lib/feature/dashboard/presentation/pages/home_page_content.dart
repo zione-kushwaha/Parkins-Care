@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:parkins_care/feature/auth/presentation/bloc/auth_state.dart';
-import 'package:parkins_care/feature/tremor/domain/entities/tremor_reading.dart';    
+import 'package:parkins_care/feature/tremor/domain/entities/tremor_reading.dart';
 import '../../../../../core/constants/app_routes.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../web_view.dart';
@@ -11,8 +11,10 @@ import '../../../community/presentation/pages/community_page.dart';
 import '../../../tremor/presentation/bloc/tremor_bloc.dart';
 import '../../../tremor/presentation/bloc/tremor_state.dart';
 import '../../../tremor/presentation/pages/tremor_monitor_page.dart';
+import '../../../medication/presentation/bloc/medication_bloc.dart';
+import '../../../medication/presentation/bloc/medication_event.dart';
+import '../../../medication/presentation/bloc/medication_state.dart';
 import '../widgets/custom_drawer.dart';
-
 
 class DashboardPage extends StatelessWidget {
   final VoidCallback onEmergencyPressed;
@@ -30,7 +32,7 @@ class DashboardPage extends StatelessWidget {
         elevation: 0,
         backgroundColor: isDark ? Colors.black : AppColors.primaryBlue,
         title: const Text(
-          'Parkin Care',
+          'Parkins Care',
           style: TextStyle(
             color: Colors.white,
             fontSize: 24,
@@ -158,6 +160,157 @@ class DashboardPage extends StatelessWidget {
                   );
                 },
               ),
+            ),
+
+            const SizedBox(height: 12),
+
+            // Medication Overview
+            BlocBuilder<MedicationBloc, MedicationState>(
+              builder: (context, state) {
+                // Load medications when the page loads
+                if (state is MedicationInitial) {
+                  final authState = context.read<AuthBloc>().state;
+                  if (authState is Authenticated) {
+                    context.read<MedicationBloc>().add(
+                      LoadMedicationsEvent(authState.user.id),
+                    );
+                  }
+                }
+
+                int upcomingCount = 0;
+                double adherenceRate = 0.0;
+                String nextMedication = '';
+
+                if (state is MedicationsLoaded) {
+                  upcomingCount = state.upcomingMedications.length;
+                  adherenceRate = state.adherenceRate;
+                  if (state.upcomingMedications.isNotEmpty) {
+                    final next = state.upcomingMedications.first;
+                    nextMedication =
+                        '${next.name} at ${next.scheduleTimes.first}';
+                  }
+                }
+
+                return GestureDetector(
+                  onTap: () => context.push(AppRoutes.medications),
+                  child: Container(
+                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    padding: EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.blue.shade400, Colors.purple.shade400],
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.blue.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.3),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.medication,
+                                color: Colors.white,
+                                size: 24,
+                              ),
+                            ),
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Medication Tracker',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    state is MedicationsLoaded
+                                        ? '$upcomingCount active medications'
+                                        : 'Loading...',
+                                    style: TextStyle(
+                                      color: Colors.white.withOpacity(0.9),
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              color: Colors.white,
+                              size: 16,
+                            ),
+                          ],
+                        ),
+                        if (state is MedicationsLoaded &&
+                            nextMedication.isNotEmpty) ...[
+                          SizedBox(height: 12),
+                          Container(
+                            padding: EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.schedule,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
+                                SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    'Next: $nextMedication',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.3),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    '${adherenceRate.toInt()}% adherence',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
 
             const SizedBox(height: 12),
@@ -412,7 +565,12 @@ class DashboardPage extends StatelessWidget {
                     color: AppColors.primaryBlue,
                     onTap: () {
                       // TODO: Navigate to reports
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => const WebViewExample( )));
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const WebViewExample(),
+                        ),
+                      );
                     },
                   ),
                 ],

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:parkins_care/feature/reminders/presentation/pages/reminder.dart';
 import '../../../../../core/constants/app_colors.dart';
 import 'package:animated_bottom_navigation_bar/animated_bottom_navigation_bar.dart';
-
 import '../../../notifications/presentation/pages/notifications_page.dart';
 import '../../../settings/presentation/pages/settings.dart';
 import '../../../tremor/presentation/bloc/tremor_bloc.dart';
@@ -25,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<Widget> get _pages => [
     DashboardPage(onEmergencyPressed: _toggleEmergencyMode),
-    Container(),
+   ReminderPage(),
     const NotificationsPage(),
     _buildPageWithAppBar('Settings', Icons.settings, const SettingsPage()),
   ];
@@ -307,7 +307,7 @@ class _EmergencyOptionsSheet extends StatelessWidget {
                           subtitle:
                               '${contact.relationship} - Video Call (888)',
                           onTap: (){
-                            
+
                           },
                           isPrimary: contact.isPrimary,
                         ),

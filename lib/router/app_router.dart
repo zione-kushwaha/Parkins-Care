@@ -4,6 +4,7 @@ import 'package:parkins_care/feature/dashboard/presentation/pages/home.dart';
 import '../feature/auth/presentation/pages/forgot_password_screen.dart';
 import '../feature/auth/presentation/pages/sign_in_screen.dart';
 import '../feature/auth/presentation/pages/sign_up_screen.dart';
+import '../feature/medication/presentation/pages/medications_screen.dart';
 import '/router/splash_screen.dart';
 import '../core/constants/app_routes.dart';
 
@@ -36,6 +37,12 @@ class AppRouter {
       GoRoute(
         path: AppRoutes.home,
         builder: (context, state) => HomeScreen()
+      ),
+
+      // Medication Routes
+      GoRoute(
+        path: AppRoutes.medications,
+        builder: (context, state) => const MedicationsScreen(),
       ),
 
     ],
